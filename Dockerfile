@@ -1,5 +1,4 @@
 FROM ubuntu:trusty
-MAINTAINER winsent <pipetc@gmail.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG C.UTF-8
@@ -21,17 +20,6 @@ RUN apt-get -y update --fix-missing && \
 
 WORKDIR /app
 
-# Configure postgres
-RUN echo "host all  all    0.0.0.0/0  trust" >> /etc/postgresql/9.3/main/pg_hba.conf && \
-    echo "listen_addresses='*'" >> /etc/postgresql/9.3/main/postgresql.conf
 
-# Nominatim install
-RUN git clone --recursive git://github.com/twain47/Nominatim.git ./src && \
-    cmake ./src && make
-
-# Nominatim create site
-COPY local.php ./settings/local.php
-RUN rm -rf /var/www/html/* && ./utils/setup.php --create-website /var/www/html
-
-# Apache configure
-COPY nominatim.conf /etc/apache2/sites-enabled/000-default.conf
+EXPOSE 5432
+EXPOSE 8080
